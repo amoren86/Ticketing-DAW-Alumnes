@@ -2,10 +2,10 @@
 -- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1:3306
--- Generation Time: Jun 18, 2022 at 02:38 PM
--- Server version: 8.0.29
--- PHP Version: 7.4.3
+-- Servidor: 127.0.0.1:3306
+-- Temps de generació: 04-12-2022 a les 15:58:16
+-- Versió del servidor: 8.0.31
+-- Versió de PHP: 7.4.3
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,31 +18,42 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `marianao`
+-- Base de dades: `ticketingdb`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `actions`
+-- Estructura de la taula `actions`
 --
 
 CREATE TABLE `actions` (
+  `type` varchar(31) NOT NULL,
   `id` bigint NOT NULL,
-  `type` varchar(25) NOT NULL,
-  `performer_username` varchar(25) NOT NULL,
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `ticket_id` bigint NOT NULL,
   `priority` int DEFAULT NULL,
-  `technician_username` varchar(25) DEFAULT NULL,
   `description` varchar(500) DEFAULT NULL,
-  `hours` int DEFAULT NULL
+  `hours` int DEFAULT NULL,
+  `performer_username` varchar(255) NOT NULL,
+  `ticket_id` bigint NOT NULL,
+  `technician_username` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `rooms`
+-- Estructura de la taula `companies`
+--
+
+CREATE TABLE `companies` (
+  `id` bigint NOT NULL,
+  `name` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de la taula `rooms`
 --
 
 CREATE TABLE `rooms` (
@@ -53,108 +64,123 @@ CREATE TABLE `rooms` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tickets`
+-- Estructura de la taula `tickets`
 --
 
 CREATE TABLE `tickets` (
   `id` bigint NOT NULL,
-  `category` varchar(25) NOT NULL,
+  `category` varchar(255) NOT NULL,
   `description` varchar(500) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `users`
+-- Estructura de la taula `users`
 --
 
 CREATE TABLE `users` (
+  `role` varchar(31) NOT NULL,
   `username` varchar(25) NOT NULL,
-  `role` varchar(25) NOT NULL,
+  `extension` int DEFAULT NULL,
   `full_name` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `extension` int DEFAULT NULL,
-  `room_id` bigint DEFAULT NULL,
   `place` varchar(100) DEFAULT NULL,
-  `company` varchar(100) DEFAULT NULL
+  `room_id` bigint DEFAULT NULL,
+  `company_id` bigint DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Indexes for dumped tables
+-- Índexs per a les taules bolcades
 --
 
 --
--- Indexes for table `actions`
+-- Índexs per a la taula `actions`
 --
 ALTER TABLE `actions`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `ticket_x_date` (`ticket_id`,`date` DESC),
   ADD KEY `type` (`type`),
-  ADD KEY `fk_performer_username` (`performer_username`),
-  ADD KEY `fk_technician_username` (`technician_username`);
+  ADD KEY `FKfg2ab9wjrg68jliat7wp1te1o` (`performer_username`),
+  ADD KEY `FK6xlobo57y0tx70axtk9sdl6e9` (`technician_username`);
 
 --
--- Indexes for table `rooms`
+-- Índexs per a la taula `companies`
+--
+ALTER TABLE `companies`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `UK_50ygfritln653mnfhxucoy8up` (`name`);
+
+--
+-- Índexs per a la taula `rooms`
 --
 ALTER TABLE `rooms`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `name` (`name`);
+  ADD UNIQUE KEY `UK_1kuqhbfxed2e8t571uo82n545` (`name`);
 
 --
--- Indexes for table `tickets`
+-- Índexs per a la taula `tickets`
 --
 ALTER TABLE `tickets`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `users`
+-- Índexs per a la taula `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`username`),
   ADD KEY `role` (`role`),
   ADD KEY `full_name` (`full_name`),
   ADD KEY `role_x_full_name` (`role`,`full_name`),
-  ADD KEY `fk_room_id` (`room_id`);
+  ADD KEY `FKlp7mqwp35k0xb2vyjw7rsi9gb` (`room_id`),
+  ADD KEY `FKin8gn4o1hpiwe6qe4ey7ykwq7` (`company_id`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- AUTO_INCREMENT per les taules bolcades
 --
 
 --
--- AUTO_INCREMENT for table `actions`
+-- AUTO_INCREMENT per la taula `actions`
 --
 ALTER TABLE `actions`
   MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `rooms`
+-- AUTO_INCREMENT per la taula `companies`
+--
+ALTER TABLE `companies`
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT per la taula `rooms`
 --
 ALTER TABLE `rooms`
   MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `tickets`
+-- AUTO_INCREMENT per la taula `tickets`
 --
 ALTER TABLE `tickets`
   MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
 
 --
--- Constraints for dumped tables
+-- Restriccions per a les taules bolcades
 --
 
 --
--- Constraints for table `actions`
+-- Restriccions per a la taula `actions`
 --
 ALTER TABLE `actions`
-  ADD CONSTRAINT `fk_ticket_id` FOREIGN KEY (`ticket_id`) REFERENCES `tickets` (`id`),
-  ADD CONSTRAINT `fk_performer_username` FOREIGN KEY (`performer_username`) REFERENCES `users` (`username`),
-  ADD CONSTRAINT `fk_technician_username` FOREIGN KEY (`technician_username`) REFERENCES `users` (`username`);
+  ADD CONSTRAINT `FK6xlobo57y0tx70axtk9sdl6e9` FOREIGN KEY (`technician_username`) REFERENCES `users` (`username`),
+  ADD CONSTRAINT `FK9ubu4eah8nrpxwpur4c88awoy` FOREIGN KEY (`ticket_id`) REFERENCES `tickets` (`id`),
+  ADD CONSTRAINT `FKfg2ab9wjrg68jliat7wp1te1o` FOREIGN KEY (`performer_username`) REFERENCES `users` (`username`);
 
 --
--- Constraints for table `users`
+-- Restriccions per a la taula `users`
 --
 ALTER TABLE `users`
-  ADD CONSTRAINT `fk_room_id` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`);
+  ADD CONSTRAINT `FKin8gn4o1hpiwe6qe4ey7ykwq7` FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`),
+  ADD CONSTRAINT `FKlp7mqwp35k0xb2vyjw7rsi9gb` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
